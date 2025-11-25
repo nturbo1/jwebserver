@@ -1,0 +1,6 @@
+# temp build files/directories
+out
+
+# IDE/Text editor specific
+.idea
+.vscode
