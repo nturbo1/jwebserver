@@ -6,3 +6,8 @@ target
 # IDE/Text editor specific
 .idea
 .vscode
+
+# LSP
+.classpath
+.project
+.settings
