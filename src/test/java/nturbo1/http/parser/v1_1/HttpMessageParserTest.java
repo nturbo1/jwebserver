@@ -19,7 +19,7 @@ class HttpMessageParserTest
     }
 
     @Test
-    void throwsHttpMessageParseExceptionForUnknownMethod()
+    void throwHttpMessageParseExceptionForUnknownMethod()
     {
         String unknownHttpMethod = "asdfasdf";
         Assertions.assertThatThrownBy(() -> HttpMessageParser.parseHttpMethod(unknownHttpMethod));
@@ -37,5 +37,16 @@ class HttpMessageParserTest
     {
         float parsedVersion = HttpMessageParser.parseHttpVersion(versionTxt);
         Assertions.assertThat(parsedVersion).isEqualTo(expectedVersion);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "", "h", "t", "p", "http", "http/1.1", "http/", "http1.1", "asdfasdfasd", "Http", "HTtp",
+            "HTTp", "HTTP", "HTTP/", "HTTP/1", "HTTP/1.", "HTTP1.1", "/", "/1.1", "HTTP/asdf",
+            "HTTP/1.a", "HTTP/a.4", "HTTP/0xFA"
+    })
+    void throwHttpMessageParseExceptionForInvalidVersion(String invalidVersionTxt)
+    {
+        Assertions.assertThatThrownBy(() -> HttpMessageParser.parseHttpVersion(invalidVersionTxt));
     }
 }
