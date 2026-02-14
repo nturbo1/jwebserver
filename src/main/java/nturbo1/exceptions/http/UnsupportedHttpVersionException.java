@@ -1,4 +1,4 @@
-package nturbo1.exceptions.parser;
+package nturbo1.exceptions.http;
 
 public class UnsupportedHttpVersionException extends Exception
 {

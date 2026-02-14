@@ -1,6 +1,7 @@
 package nturbo1.http.parser.v1_1;
 
-import nturbo1.exceptions.parser.HttpMessageParseException;
+import nturbo1.exceptions.http.HttpMessageParseException;
+import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
 import nturbo1.http.HttpMethod;
 import nturbo1.log.CustomLogger;
 import org.assertj.core.api.Assertions;
@@ -75,9 +76,10 @@ class HttpMessageParserTest
 
     @ParameterizedTest
     @MethodSource("validHttpMessageHeadersBytes")
-    void returnMapWithExpectedValuesAfterParsingHttpMessageHeaders(TestParseHttpHeaders testHeaders)
-            throws HttpMessageParseException, IOException
+    void givenValidHttpMessageHeaders_whenParsingHttpMessageHeaders_returnMapWithExpectedValues(TestParseHttpHeaders testHeaders)
+            throws InvalidHttpMessageHeaderException, IOException
     {
+        log.info("Testing header bytes: " + new String(testHeaders.headersBytes));
         InputStream is = new ByteArrayInputStream(testHeaders.headersBytes);
         Map<String, List<String>> parsedHeadersMap = HttpMessageParser.parseHttpMessageHeaders(is);
 
@@ -205,7 +207,7 @@ class HttpMessageParserTest
 
                 /* HEADERS THAT MUST NOT BE SPLIT ON COMMAS */
                 new TestParseHttpHeaders(
-                        "Date: Tue, 15 Nov 1994 08:12:31\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Date: Tue, 15 Nov 1994 08:12:31\r\n\r\n".getBytes(StandardCharsets.UTF_8),
                         Map.of("date", List.of("Tue, 15 Nov 1994 08:12:31"))
                 ),
                 new TestParseHttpHeaders(
@@ -265,7 +267,7 @@ class HttpMessageParserTest
 
                 /* LF ONLY LINE TERMINATION */
                 new TestParseHttpHeaders(
-                        "Host: example.com\n".getBytes(StandardCharsets.UTF_8),
+                        "Host: example.com\n\r\n".getBytes(StandardCharsets.UTF_8),
                         Map.of("host", List.of("example.com"))
                 ),
                 new TestParseHttpHeaders(

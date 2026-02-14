@@ -1,5 +1,7 @@
 package nturbo1.util;
 
+import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,6 +31,51 @@ public class Bytes
             }
 
             buf.write(nextByte);
+        }
+
+        return buf.toByteArray();
+    }
+
+    /**
+     * Reads byte by byte from a given input stream until it detects "\r\n" or '\n' or the end of the input stream.
+     * <p>
+     *     If a line ends with neither "\r\n" nor '\n', then throws InvalidHttpMessageHeaderException.
+     * </p>
+     * <p>
+     *     If the stream ends with no empty line, "\r\n" or '\n', then throws InvalidHttpMessageHeaderException.
+     * </p>
+     *
+     * @param iStream the input stream that the bytes are read from.
+     * @return an array of bytes read excluding the newline symbols.
+     * @throws IOException any IO error happened during a reading process.
+     * @throws InvalidHttpMessageHeaderException if an HTTP header line or the whole headers section ends with invalid
+     * characters.
+     */
+    public static byte[] readHttpMessageHeaderLine(InputStream iStream)
+            throws IOException, InvalidHttpMessageHeaderException
+    {
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        int nextByte;
+
+        while ((nextByte = iStream.read()) != -1)
+        {
+            if (nextByte == '\n') { break; }
+            else if (nextByte == '\r')
+            {
+                int n = iStream.read();
+                if (n == '\n') { break; }
+                else
+                {
+                    throw new InvalidHttpMessageHeaderException("Invalid header line ending with: \r");
+                }
+            }
+
+            buf.write(nextByte);
+        }
+
+        if (nextByte == -1)
+        {
+            throw new InvalidHttpMessageHeaderException("HTTP message headers section didn't end with empty line");
         }
 
         return buf.toByteArray();

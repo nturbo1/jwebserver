@@ -1,8 +1,9 @@
 package nturbo1.server;
 
-import nturbo1.exceptions.parser.BadHttpRequestHeaderException;
-import nturbo1.exceptions.parser.HttpMessageParseException;
-import nturbo1.exceptions.parser.UnsupportedHttpVersionException;
+import nturbo1.exceptions.http.BadHttpRequestHeaderException;
+import nturbo1.exceptions.http.HttpMessageParseException;
+import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
+import nturbo1.exceptions.http.UnsupportedHttpVersionException;
 import nturbo1.http.parser.v1_1.HttpRequestParser;
 import nturbo1.http.v1_1.HttpRequest;
 import nturbo1.log.CustomLogger;
@@ -37,6 +38,9 @@ public class Connection
         } catch (HttpMessageParseException e) {
             log.error("Failed to parse the HTTP request because: " + e.getMessage());
             // TODO: SEND A PROPER HTTP RESPONSE!!!
+        } catch (InvalidHttpMessageHeaderException e) {
+            log.warn("Invalid http message header detected!");
+            // TODO: YOU SHOULD PROBABLY SEND 400 BAD REQUEST RESPONSE OR STH
         } catch (UnsupportedHttpVersionException e) {
             log.warn("HANDLE UNSUPPORTED HTTP VERSION IN THE REQUEST CASE!!!!!!");
             // TODO: SEND A PROPER HTTP RESPONSE!!!

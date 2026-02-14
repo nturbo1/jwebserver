@@ -1,7 +1,8 @@
 package nturbo1.http.parser.v1_1;
 
-import nturbo1.exceptions.parser.BadHttpRequestHeaderException;
-import nturbo1.exceptions.parser.HttpMessageParseException;
+import nturbo1.exceptions.http.BadHttpRequestHeaderException;
+import nturbo1.exceptions.http.HttpMessageParseException;
+import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
 import nturbo1.http.HttpMethod;
 import nturbo1.http.v1_1.GeneralHeader;
 import nturbo1.http.v1_1.HttpEntityHeader;
@@ -59,13 +60,13 @@ public class HttpMessageParser {
     }
 
     public static Map<String, List<String>> parseHttpMessageHeaders(InputStream iStream)
-            throws HttpMessageParseException, IOException {
+            throws InvalidHttpMessageHeaderException, IOException {
         log.debug("Parsing the HTTP Message Headers...");
         Map<String, List<String>> headers = new HashMap<>();
         while (true) {
             String line;
             try {
-                line = new String(Bytes.readLine(iStream));
+                line = new String(Bytes.readHttpMessageHeaderLine(iStream));
             } catch (IOException e) {
                 log.error("Failed to read the next line from buffer because: " + e.getMessage());
                 throw e;
@@ -77,7 +78,7 @@ public class HttpMessageParser {
 
             String[] headerKV = line.split(":", 2);
             if (headerKV.length < 2) {
-                throw new HttpMessageParseException("Invalid HTTP Message Header format: " + line);
+                throw new InvalidHttpMessageHeaderException("Invalid HTTP Message Header format: " + line);
             }
 
             String headerKey = headerKV[0].trim().toLowerCase();
@@ -92,7 +93,7 @@ public class HttpMessageParser {
             {
                 if (HttpEntityHeader.CONTENT_LENGTH.name().equals(headerKey))
                 {
-                    throw new HttpMessageParseException("More than one instances of " + HttpEntityHeader.CONTENT_LENGTH +
+                    throw new InvalidHttpMessageHeaderException("More than one instances of " + HttpEntityHeader.CONTENT_LENGTH +
                             " header was encountered in the http message headers");
                 }
                 headerValueList.addAll(headerValues);

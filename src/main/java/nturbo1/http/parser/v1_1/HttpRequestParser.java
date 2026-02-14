@@ -1,8 +1,9 @@
 package nturbo1.http.parser.v1_1;
 
-import nturbo1.exceptions.parser.BadHttpRequestHeaderException;
-import nturbo1.exceptions.parser.HttpMessageParseException;
-import nturbo1.exceptions.parser.UnsupportedHttpVersionException;
+import nturbo1.exceptions.http.BadHttpRequestHeaderException;
+import nturbo1.exceptions.http.HttpMessageParseException;
+import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
+import nturbo1.exceptions.http.UnsupportedHttpVersionException;
 import nturbo1.http.HttpMethod;
 import nturbo1.http.v1_1.HttpRequest;
 import nturbo1.log.CustomLogger;
@@ -28,7 +29,12 @@ public class HttpRequestParser
     private static final CustomLogger log = CustomLogger.getLogger(HttpRequestParser.class.getName());
 
     public static HttpRequest parseHttpRequest(InputStream iStream)
-            throws BadHttpRequestHeaderException, HttpMessageParseException, UnsupportedHttpVersionException, IOException
+            throws
+            BadHttpRequestHeaderException,
+            HttpMessageParseException,
+            UnsupportedHttpVersionException,
+            IOException,
+            InvalidHttpMessageHeaderException
     {
         String reqLine;
         try {
