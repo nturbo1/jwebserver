@@ -63,6 +63,10 @@ public class Bytes
         {
             switch (nextByte)
             {
+                // control characters in ASCII
+                case '\u0000', '\u0001', '\u0007', '\u0008', '\t', '\u0010', '\u0012', '\u0013', 27, 127:
+                    throw new InvalidHttpMessageHeaderException(
+                            "ASCII Control characters are not allowed in HTTP message header lines");
                 case '\n':
                     break readLoop;
                 case '\r':

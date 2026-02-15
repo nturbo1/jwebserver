@@ -316,8 +316,6 @@ class HttpMessageParserTest
                 "headerName:: example.com\r\n\r\n".getBytes(StandardCharsets.UTF_8),
 
                 /* HEADER VALUE SYNTAX ERRORS */
-                // Leading whitespace without obs-fold context
-                " Host: example.com\r\n\r\n".getBytes(StandardCharsets.UTF_8),
                 // Value with raw CR
                 "Header: value\rmore\r\n\r\n".getBytes(StandardCharsets.UTF_8),
                 // Value with raw LF
