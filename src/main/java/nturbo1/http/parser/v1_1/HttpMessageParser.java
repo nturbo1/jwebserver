@@ -25,6 +25,23 @@ public class HttpMessageParser {
     public static final float HTTP_VERSION_1_1 = 1.1f;
 
     public static final String HTTP_MESSAGE_HEADER_NAME_REGEX = "[0-9a-zA-Z!#$%&'*+.^_`|~-]+";
+    public static final List<String> NON_REPEATABLE_HEADERS = List.of( // Non comma separated headers as well
+            GeneralHeader.DATE.getName().toLowerCase(),
+            GeneralHeader.TRANSFER_ENCODING.getName().toLowerCase(),
+            HttpEntityHeader.CONTENT_LENGTH.getName().toLowerCase(),
+            HttpEntityHeader.CONTENT_TYPE.getName().toLowerCase(),
+            HttpEntityHeader.EXPIRES.getName().toLowerCase(),
+            HttpRequestHeader.HOST.getName().toLowerCase(),
+            HttpRequestHeader.USER_AGENT.getName().toLowerCase(),
+            HttpRequestHeader.FROM.getName().toLowerCase(),
+            HttpRequestHeader.AUTHORIZATION.getName().toLowerCase(),
+            HttpRequestHeader.REFERER.getName().toLowerCase(),
+            HttpRequestHeader.IF_MATCH.getName().toLowerCase(),
+            HttpRequestHeader.IF_NONE_MATCH.getName().toLowerCase(),
+            HttpRequestHeader.IF_MODIFIED_SINCE.getName().toLowerCase(),
+            HttpRequestHeader.IF_UNMODIFIED_SINCE.getName().toLowerCase(),
+            HttpRequestHeader.IF_RANGE.getName().toLowerCase()
+    );
 
     private static final CustomLogger log = CustomLogger.getLogger(HttpMessageParser.class.getName());
 
@@ -91,9 +108,9 @@ public class HttpMessageParser {
             }
             else
             {
-                if (HttpEntityHeader.CONTENT_LENGTH.name().equals(headerKey))
+                if (NON_REPEATABLE_HEADERS.contains(headerKey.toLowerCase()))
                 {
-                    throw new InvalidHttpMessageHeaderException("More than one instances of " + HttpEntityHeader.CONTENT_LENGTH +
+                    throw new InvalidHttpMessageHeaderException("More than one instances of " + headerKey +
                             " header was encountered in the http message headers");
                 }
                 headerValueList.addAll(headerValues);
