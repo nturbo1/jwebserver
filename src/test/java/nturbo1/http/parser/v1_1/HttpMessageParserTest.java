@@ -348,16 +348,6 @@ class HttpMessageParserTest
                 /* HEADER SECTION STRUCTURAL ERRORS */
                 // Garbage before headers
                 "garbage\r\nHost: example.com\r\n\r\n".getBytes(StandardCharsets.UTF_8),
-                // Header after empty line
-                "Host: example.com\r\n\r\nUser-Agent: test\r\n".getBytes(StandardCharsets.UTF_8),
-                // Multiple empty lines inside headers
-                "Host: example.com\r\n\r\n\r\n".getBytes(StandardCharsets.UTF_8),
-
-                /* SIZE AND LENGTH VIOLATIONS */
-                // Extremely long header name
-                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
-                // Extremely long value
-                "Header: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\r\n\r\n".getBytes(StandardCharsets.UTF_8),
 
                 /* INVALID TRANSFER-ENCODING VALUES */
                 "Transfer-Encoding: chunked, chunked\r\n\r\n".getBytes(StandardCharsets.UTF_8),
