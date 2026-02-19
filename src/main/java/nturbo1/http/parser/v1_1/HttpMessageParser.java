@@ -125,8 +125,7 @@ public class HttpMessageParser {
 
     public static boolean isHeaderCommaSeparatedList(String headerName)
     {
-        return !headerName.equalsIgnoreCase(GeneralHeader.DATE.getName()) &&
-                !headerName.equalsIgnoreCase(HttpRequestHeader.USER_AGENT.getName());
+        return !NON_REPEATABLE_HEADERS.contains(headerName.toLowerCase());
     }
 
     private static List<String> parseAndNormalizeHeaderValue(String headerName, String headerValue)
