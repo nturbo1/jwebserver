@@ -117,18 +117,18 @@ class HttpMessageParserTest
     {
         return Stream.of(
                 new TestParseHttpHeaders(
-                        ("\r\n").getBytes(StandardCharsets.UTF_8),
+                        ("\r\n").getBytes(StandardCharsets.US_ASCII),
                         Map.of()
                 ),
                 new TestParseHttpHeaders(
-                        ("Host: example.com\r\n\r\n").getBytes(StandardCharsets.UTF_8),
+                        ("Host: example.com\r\n\r\n").getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"))
                 ),
                 new TestParseHttpHeaders(
                         ("Host: www.example.com\r\nUser-Agent: Mozilla/5.0\r\nAccept: text/html,application/xhtml+xml\r\n" +
                         "Accept-Language: en-US,en;q=0.9\r\nAccept-Encoding: gzip, deflate\r\n" +
                         "Connection: keep-alive\r\n\r\n")
-                                .getBytes(StandardCharsets.UTF_8),
+                                .getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("www.example.com"),
                                 "user-agent", List.of("Mozilla/5.0"),
                                 "accept", List.of("text/html", "application/xhtml+xml"),
@@ -139,7 +139,7 @@ class HttpMessageParserTest
                 new TestParseHttpHeaders(
                         ("Connection: close\r\nAccept: */*\r\nHost: api.example.com\r\n" +
                         "User-Agent: unit-test-client/1.0\r\n\r\n")
-                                .getBytes(StandardCharsets.UTF_8),
+                                .getBytes(StandardCharsets.US_ASCII),
                         Map.of("connection", List.of("close"),
                                 "accept", List.of("*/*"),
                                 "host", List.of("api.example.com"),
@@ -149,7 +149,7 @@ class HttpMessageParserTest
                         ("Host: example.com\r\nCache-Control: no-cache, no-store, must-revalidate\r\n" +
                         "Accept: application/json;q=0.8, text/plain;q=0.5\r\n" +
                         "Accept-Charset: utf-8, iso-8859-1;q=0.3\r\n\r\n")
-                                .getBytes(StandardCharsets.UTF_8),
+                                .getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"),
                                 "cache-control", List.of("no-cache", "no-store", "must-revalidate"),
                                 "accept", List.of("application/json;q=0.8", "text/plain;q=0.5"),
@@ -158,14 +158,14 @@ class HttpMessageParserTest
                 new TestParseHttpHeaders(
                         ("Host: example.com\r\nContent-Disposition: form-data; name=\"field1\"; filename=\"test.txt\"\r\n" +
                         "Content-Type: text/plain; charset=\"utf-8\"\r\n\r\n")
-                                .getBytes(StandardCharsets.UTF_8),
+                                .getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"),
                                 "content-disposition", List.of("form-data; name=\"field1\"; filename=\"test.txt\""),
                                 "content-type", List.of("text/plain; charset=\"utf-8\""))
                 ),
                 new TestParseHttpHeaders(
                         ("Host: example.com\r\nContent-Length: 348\r\nDate: Tue, 15 Nov 1994 08:12:31 GMT\r\n\r\n")
-                                .getBytes(StandardCharsets.UTF_8),
+                                .getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"),
                                 "content-length", List.of("348"),
                                 "date", List.of("Tue, 15 Nov 1994 08:12:31 GMT"))
@@ -173,109 +173,109 @@ class HttpMessageParserTest
 
                 /* CASE-INSENSITIVITY */
                 new TestParseHttpHeaders(
-                        ("hOsT: Example.COM\r\nUsEr-AgEnT: TestClient\r\n\r\n").getBytes(StandardCharsets.UTF_8),
+                        ("hOsT: Example.COM\r\nUsEr-AgEnT: TestClient\r\n\r\n").getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("Example.COM"), "user-agent", List.of("TestClient"))
                 ),
                 new TestParseHttpHeaders(
-                        ("HOST: example.com\r\nCONNECTION: close\r\n\r\n").getBytes(StandardCharsets.UTF_8),
+                        ("HOST: example.com\r\nCONNECTION: close\r\n\r\n").getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"), "connection", List.of("close"))
                 ),
 
                 /* WHITESPACE HANDLING */
                 new TestParseHttpHeaders(
-                        "Host    :    example.com   \r\nConnection :keep-alive\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Host    :    example.com   \r\nConnection :keep-alive\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"), "connection", List.of("keep-alive"))
                 ),
                 new TestParseHttpHeaders(
-                        "Accept:   text/html  ,  application/json   \r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Accept:   text/html  ,  application/json   \r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("accept", List.of("text/html", "application/json"))
                 ),
 
                 /* COMMA-SEPARATED LIST HEADERS */
                 new TestParseHttpHeaders(
-                        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("accept", List.of("text/html", "application/xhtml+xml", "application/xml;q=0.9"))
                 ),
                 new TestParseHttpHeaders(
-                        "Accept-Encoding: gzip, deflate, br\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Accept-Encoding: gzip, deflate, br\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("accept-encoding", List.of("gzip", "deflate", "br"))
                 ),
                 new TestParseHttpHeaders(
-                        "Cache-Control: no-cache, no-store, must-revalidate\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Cache-Control: no-cache, no-store, must-revalidate\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("cache-control", List.of("no-cache", "no-store", "must-revalidate"))
                 ),
 
                 /* HEADERS THAT MUST NOT BE SPLIT ON COMMAS */
                 new TestParseHttpHeaders(
-                        "Date: Tue, 15 Nov 1994 08:12:31\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Date: Tue, 15 Nov 1994 08:12:31\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("date", List.of("Tue, 15 Nov 1994 08:12:31"))
                 ),
                 new TestParseHttpHeaders(
-                        "User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7)\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "User-Agent: Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7)\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("user-agent", List.of("Mozilla/5.0 (Macintosh, Intel Mac OS X 10_15_7)"))
                 ),
 
                 /* SEMICOLON PARAMETERS (SHOULD STAY INTACT) */
                 new TestParseHttpHeaders(
-                        "Set-Cookie: sessionId=abc123; Path=/; HttpOnly\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Set-Cookie: sessionId=abc123; Path=/; HttpOnly\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("set-cookie", List.of("sessionId=abc123; Path=/; HttpOnly"))
                 ),
                 new TestParseHttpHeaders(
-                        "Content-Type: text/html; charset=UTF-8\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Content-Type: text/html; charset=UTF-8\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("content-type", List.of("text/html; charset=UTF-8"))
                 ),
                 new TestParseHttpHeaders(
-                        "Content-Disposition: form-data; name=\"file\"; filename=\"test.txt\"\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Content-Disposition: form-data; name=\"file\"; filename=\"test.txt\"\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("content-disposition", List.of("form-data; name=\"file\"; filename=\"test.txt\""))
                 ),
 
                 /* REPEATED HEADERS */
                 new TestParseHttpHeaders(
-                        "Set-Cookie: a=1; Path=/\r\nSet-Cookie: b=2; Path=/\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Set-Cookie: a=1; Path=/\r\nSet-Cookie: b=2; Path=/\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("set-cookie", List.of("a=1; Path=/", "b=2; Path=/"))
                 ),
                 new TestParseHttpHeaders(
-                        "Accept: text/html\r\nAccept: application/json\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Accept: text/html\r\nAccept: application/json\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("accept", List.of("text/html", "application/json"))
                 ),
 
                 /* HEADERS WITH EMPTY VALUES */
                 new TestParseHttpHeaders(
-                        "X-Debug:\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "X-Debug:\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("x-debug", List.of())
                 ),
                 new TestParseHttpHeaders(
-                        "X-Optional:    \r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "X-Optional:    \r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("x-optional", List.of())
                 ),
 
                 /* NUMERIC HEADER VALUES */
                 new TestParseHttpHeaders(
-                        "Content-Length: 0\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Content-Length: 0\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("content-length", List.of("0"))
                 ),
                 new TestParseHttpHeaders(
-                        "Content-Length: 18446744073709551615\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Content-Length: 18446744073709551615\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("content-length", List.of("18446744073709551615"))
                 ),
 
                 /* UNKNOWN / EXTENSION HEADERS */
                 new TestParseHttpHeaders(
-                        "X-Custom-Header: foo, bar, baz\r\nX-Another-One: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "X-Custom-Header: foo, bar, baz\r\nX-Another-One: value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("x-custom-header", List.of("foo", "bar", "baz"), "x-another-one", List.of("value"))
                 ),
 
                 /* LF ONLY LINE TERMINATION */
                 new TestParseHttpHeaders(
-                        "Host: example.com\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Host: example.com\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"))
                 ),
                 new TestParseHttpHeaders(
-                        "Header: value\nAnother: value\n\n".getBytes(StandardCharsets.UTF_8),
+                        "Header: value\nAnother: value\n\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("header", List.of("value"), "another", List.of("value"))
                 ),
                 new TestParseHttpHeaders(
-                        "Host: example.com\r\nUser-Agent: test\nAccept: */*\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                        "Host: example.com\r\nUser-Agent: test\nAccept: */*\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                         Map.of("host", List.of("example.com"),
                                 "user-agent", List.of("test"),
                                 "accept", List.of("*/*")
@@ -290,78 +290,83 @@ class HttpMessageParserTest
                 /* LINE TERMINATION ERROR */
                 // Missing CRLF (LF only)
                 // CR only
-                "Host: example.com\r".getBytes(StandardCharsets.UTF_8),
+                "Host: example.com\r".getBytes(StandardCharsets.US_ASCII),
                 // No final empty line
-                "Host: example.com\r\nUser-Agent: test\r\n".getBytes(StandardCharsets.UTF_8),
+                "Host: example.com\r\nUser-Agent: test\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* HEADER NAME SYNTAX VIOLATIONS */
                 // Empty header name
-                ": value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                ": value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Whitespace in header name
-                "Bad Header: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Bad Header: value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
+                // Whitespace before the first header field line, right after the start line
+                " headerName: headerValue\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
+                "\theaderName: headerValue\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
+                "\u0012headerName: headerValue\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
+                "\rheaderName: headerValue\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Tab in header name
-                "Bad\tHeader: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Bad\tHeader: value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Control characters in header name
-                "Bad\u0001Header: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Bad\u0001Header: value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Non-token characters
-                "Bad@Header: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
-                "Bad/Header: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Bad@Header: value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
+                "Bad/Header: value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Unicode in header name
-                "Høst: value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Høst: value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* COLON ERRORS */
                 // Missing colon
-                "headerName example.com\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "headerName example.com\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Multiple colons before value
-                "headerName:: example.com\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "headerName:: example.com\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* HEADER VALUE SYNTAX ERRORS */
                 // Value with raw CR
-                "Header: value\rmore\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Header: value\rmore\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Value with raw LF
-                "Header: value\nmore\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Header: value\nmore\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Embedded NULL byte
-                "Header: value\u0000test\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Header: value\u0000test\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Unescaped control characters
-                "Header: value\u0007\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Header: value\u0007\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* OBSOLETE LINE FOLDING (OBS-FOLD) ABUSE */
                 // Obs-fold without previous header
-                " value\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                " value\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Obs-fold starting with tab only
-                "Header: value\r\n\tcontinued\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Header: value\r\n\tcontinued\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Obs-fold containing CRLF inside value
-                "Header: value\r\ncontinued\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Header: value\r\ncontinued\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* DUPLICATE AND FORBIDDEN HEADERS */
                 // Duplicate Host header
-                "Host: example.com\r\nHost: evil.com\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Host: example.com\r\nHost: evil.com\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Multiple Content-Length headers
-                "Content-Length: 10\r\nContent-Length: 20\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Content-Length: 10\r\nContent-Length: 20\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Conflicting Transfer-Encoding and Content-Length headers
                 // NOTE: this one is ignored because currently "Transfer-Encoding" header will be preferred if both
                 // headers exist in a message. If it's strictly required that the 2 headers must not exist in a single
                 // message in the newer/latest HTTP 1.1 specs, then the below test case string should be uncommented
                 // and the parser should be fixed to pass the test case.
-//                "Transfer-Encoding: chunked\r\nContent-Length: 5\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+//                "Transfer-Encoding: chunked\r\nContent-Length: 5\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* HEADER SECTION STRUCTURAL ERRORS */
                 // Garbage before headers
-                "garbage\r\nHost: example.com\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "garbage\r\nHost: example.com\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* INVALID TRANSFER-ENCODING VALUES */
-                "Transfer-Encoding: chunked, chunked\r\n\r\n".getBytes(StandardCharsets.UTF_8),
-                "Transfer-Encoding: gzip, chunked, invalid\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Transfer-Encoding: chunked, chunked\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
+                "Transfer-Encoding: gzip, chunked, invalid\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
 
                 /* INVALID CONTENT-LENGTH VALUES */
                 // Non-numeric
-                "Content-Length: abc\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Content-Length: abc\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Negative
-                "Content-Length: -5\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Content-Length: -5\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Decimal
-                "Content-Length: 5.5\r\n\r\n".getBytes(StandardCharsets.UTF_8),
+                "Content-Length: 5.5\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
                 // Leading plus
-                "Content-Length: +10\r\n\r\n".getBytes(StandardCharsets.UTF_8)
+                "Content-Length: +10\r\n\r\n".getBytes(StandardCharsets.US_ASCII)
         );
     }
 }

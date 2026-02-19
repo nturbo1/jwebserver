@@ -13,6 +13,7 @@ import nturbo1.util.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,33 +83,26 @@ public class HttpMessageParser {
     public static Map<String, List<String>> parseHttpMessageHeaders(InputStream iStream)
             throws InvalidHttpMessageHeaderException, IOException {
         log.debug("Parsing the HTTP Message Headers...");
+
+        String headerLine = new String(Bytes.readHttpMessageHeaderLine(iStream), StandardCharsets.US_ASCII);
+
         Map<String, List<String>> headers = new HashMap<>();
-        while (true) {
-            String line;
-            try {
-                line = new String(Bytes.readHttpMessageHeaderLine(iStream));
-            } catch (IOException e) {
-                log.error("Failed to read the next line from buffer because: " + e.getMessage());
-                throw e;
-            }
-
-            if (line.isEmpty()) { // End of the http message headers section
-                break;
-            }
-
-            String[] headerKV = parseHttpMessageHeaderLine(line);
+        while (!headerLine.isEmpty())
+        {
+            String[] headerKV = parseHttpMessageHeaderLine(headerLine);
 
             String headerKey = headerKV[0];
             List<String> headerValues = parseAndNormalizeHeaderValue(headerKey, headerKV[1]);
 
             List<String> headerValueList = headers.get(headerKey);
+
             if (headerValueList == null)
             {
                 headerValueList = new ArrayList<>(headerValues);
             }
             else
             {
-                if (NON_REPEATABLE_HEADERS.contains(headerKey.toLowerCase()))
+                if (!isHeaderCommaSeparatedList(headerKey))
                 {
                     throw new InvalidHttpMessageHeaderException("More than one instances of " + headerKey +
                             " header was encountered in the http message headers");
@@ -117,6 +111,13 @@ public class HttpMessageParser {
             }
 
             headers.put(headerKey, headerValueList);
+
+            try {
+                headerLine = new String(Bytes.readHttpMessageHeaderLine(iStream));
+            } catch (IOException e) {
+                log.error("Failed to read the next line from buffer because: " + e.getMessage());
+                throw e;
+            }
         }
 
         log.debug("Successfully parsed the HTTP Message Headers!");
@@ -246,9 +247,15 @@ public class HttpMessageParser {
     private static String[] parseHttpMessageHeaderLine(String line) throws InvalidHttpMessageHeaderException
     {
         String[] headerKV = line.split(":", 2);
+
         if (headerKV.length < 2) {
             throw new InvalidHttpMessageHeaderException("Invalid HTTP Message Header format: " + line);
         }
+        if (Pattern.matches("\\s", headerKV[0].substring(0, 1)))
+        {
+            throw new InvalidHttpMessageHeaderException("Whitespace before header field name");
+        }
+
         headerKV[0] = headerKV[0].trim().toLowerCase();
         validateHttpMessageHeaderName(headerKV[0]);
         headerKV[1] = headerKV[1].trim();
