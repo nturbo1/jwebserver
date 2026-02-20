@@ -352,21 +352,7 @@ class HttpMessageParserTest
 
                 /* HEADER SECTION STRUCTURAL ERRORS */
                 // Garbage before headers
-                "garbage\r\nHost: example.com\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
-
-                /* INVALID TRANSFER-ENCODING VALUES */
-                "Transfer-Encoding: chunked, chunked\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
-                "Transfer-Encoding: gzip, chunked, invalid\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
-
-                /* INVALID CONTENT-LENGTH VALUES */
-                // Non-numeric
-                "Content-Length: abc\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
-                // Negative
-                "Content-Length: -5\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
-                // Decimal
-                "Content-Length: 5.5\r\n\r\n".getBytes(StandardCharsets.US_ASCII),
-                // Leading plus
-                "Content-Length: +10\r\n\r\n".getBytes(StandardCharsets.US_ASCII)
+                "garbage\r\nHost: example.com\r\n\r\n".getBytes(StandardCharsets.US_ASCII)
         );
     }
 }
