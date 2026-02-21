@@ -1,4 +1,4 @@
-package nturbo1.http.v1_1;
+package nturbo1.http;
 
 /**
  * request-header = Accept

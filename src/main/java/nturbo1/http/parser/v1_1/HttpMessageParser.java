@@ -3,10 +3,10 @@ package nturbo1.http.parser.v1_1;
 import nturbo1.exceptions.http.BadHttpRequestHeaderException;
 import nturbo1.exceptions.http.HttpMessageParseException;
 import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
+import nturbo1.http.GeneralHeader;
+import nturbo1.http.HttpEntityHeader;
 import nturbo1.http.HttpMethod;
-import nturbo1.http.v1_1.GeneralHeader;
-import nturbo1.http.v1_1.HttpEntityHeader;
-import nturbo1.http.v1_1.HttpRequestHeader;
+import nturbo1.http.HttpRequestHeader;
 import nturbo1.log.CustomLogger;
 import nturbo1.util.Bytes;
 

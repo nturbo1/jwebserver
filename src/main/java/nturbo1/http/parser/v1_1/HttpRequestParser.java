@@ -5,7 +5,7 @@ import nturbo1.exceptions.http.HttpMessageParseException;
 import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
 import nturbo1.exceptions.http.UnsupportedHttpVersionException;
 import nturbo1.http.HttpMethod;
-import nturbo1.http.v1_1.HttpRequest;
+import nturbo1.http.HttpRequest;
 import nturbo1.log.CustomLogger;
 import nturbo1.util.Bytes;
 

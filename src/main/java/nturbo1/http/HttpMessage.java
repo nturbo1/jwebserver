@@ -1,6 +1,4 @@
-package nturbo1.http.v1_1;
-
-import nturbo1.http.HttpMethod;
+package nturbo1.http;
 
 import java.util.List;
 import java.util.Map;

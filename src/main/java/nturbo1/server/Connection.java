@@ -4,8 +4,8 @@ import nturbo1.exceptions.http.BadHttpRequestHeaderException;
 import nturbo1.exceptions.http.HttpMessageParseException;
 import nturbo1.exceptions.http.InvalidHttpMessageHeaderException;
 import nturbo1.exceptions.http.UnsupportedHttpVersionException;
+import nturbo1.http.HttpRequest;
 import nturbo1.http.parser.v1_1.HttpRequestParser;
-import nturbo1.http.v1_1.HttpRequest;
 import nturbo1.log.CustomLogger;
 
 import java.io.IOException;
