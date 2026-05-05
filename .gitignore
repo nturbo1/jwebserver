@@ -2,6 +2,7 @@
 out
 dist
 target
+build
 
 # IDE/Text editor specific
 .idea
@@ -11,3 +12,6 @@ target
 .classpath
 .project
 .settings
+
+# Gradle
+.gradle
