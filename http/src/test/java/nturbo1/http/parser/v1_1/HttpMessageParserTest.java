@@ -3,6 +3,7 @@ package nturbo1.http.parser.v1_1;
 import nturbo1.http.HttpMethod;
 import nturbo1.http.exceptions.HttpMessageParseException;
 import nturbo1.http.exceptions.InvalidHttpMessageHeaderException;
+import nturbo1.http.parser.HttpMessageParser;
 import nturbo1.log.CustomLogger;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

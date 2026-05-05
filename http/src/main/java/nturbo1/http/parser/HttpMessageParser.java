@@ -1,4 +1,4 @@
-package nturbo1.http.parser.v1_1;
+package nturbo1.http.parser;
 
 import nturbo1.http.GeneralHeader;
 import nturbo1.http.HttpEntityHeader;
