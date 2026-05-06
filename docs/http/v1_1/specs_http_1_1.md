@@ -9,11 +9,11 @@
 - **RFC 9110** — *describes the overall architecture of HTTP, establishes common terminology, and defines aspects of the 
   protocol that are shared by all versions. In this definition are core protocol elements, extensibility mechanisms, and
   the "http" and "https" Uniform Resource Identifier (URI) schemes*.
-  - (IETF Datatracker RFC 9112)
+  - (IETF Datatracker RFC 9110)
     - https://datatracker.ietf.org/doc/html/rfc9110
 - **RFC 9111** — This document defines HTTP caches and the associated header fields that control cache behavior or indicate
   cacheable response messages.
-  - (IETF Datatracker RFC 9112)
+  - (IETF Datatracker RFC 9111)
     - https://datatracker.ietf.org/doc/html/rfc9111
 
 ### Old and obsolete specs
