@@ -14,7 +14,6 @@ class HttpMsgParser {
 
     private static final int MAX_HEADER_NAME_SIZE = 8192;
     private static final int MAX_HEADER_VALUE_SIZE = 8192;
-    private static final int MAX_REQUEST_LINE_SIZE = 8192;
     private static final int MAX_HTTP_METHOD_NAME_SIZE = 32;
     private static final int MAX_HTTP_VERSION_BYTES_SIZE = 32; // Doesn't include the prefix, which is 'HTTP/'
 
@@ -57,6 +56,8 @@ class HttpMsgParser {
             } catch (BufferOverflowException bofe) {
                 throw new HttpMessageParseException("The HTTP method name in the request line exceeded the size limit.");
             }
+
+            ch = iStream.read();
         }
 
         if (ch == -1)
@@ -102,6 +103,8 @@ class HttpMsgParser {
             } catch (BufferOverflowException bofe) {
                 throw new HttpMessageParseException("HTTP version number bytes exceeds the limit.");
             }
+
+            ch = iStream.read();
         }
         assert versionBytes.hasArray() && versionBytes.position() > 0 : "HTTP Version number bytes buffer shouldn't be empty!";
 
@@ -166,6 +169,8 @@ class HttpMsgParser {
             } else {
                 throw new InvalidHttpHeaderException("Invalid character encountered in the header name: " + ch);
             }
+
+            ch = iStream.read();
         }
 
         if (!headerNameBuf.hasArray() || headerNameBuf.position() == 0) {
@@ -202,28 +207,30 @@ class HttpMsgParser {
             {
                 throw new InvalidHttpHeaderException(String.format("Invalid byte detected in the header field value: %d", ch));
             }
+
+            ch = iStream.read();
         }
 
         throw new HttpMessageParseException("An HTTP message header section MUST end with an empty new line!");
     }
 
-    private static boolean isWhitespace(int ch) {
+    static boolean isWhitespace(int ch) {
         return ch == ' ' || ch == '\t';
     }
 
-    private static boolean isAlphanumeric(int ch) {
+    static boolean isAlphanumeric(int ch) {
         return (48 <= ch && ch <= 57) || (65 <= ch && ch <= 90) || (97 <= ch && ch <= 122);
     }
 
-    private static boolean isVAscii(int ch) {
+    static boolean isVAscii(int ch) {
         return 33 <= ch && ch <= 126;
     }
 
-    private static boolean isExtendedAsciiBytes(int ch) {
+    static boolean isExtendedAsciiBytes(int ch) {
         return 128 <= ch && ch <= 255;
     }
 
-    private static int skipUntilNonWhitespace(InputStream iStream) throws IOException {
+    static int skipUntilNonWhitespace(InputStream iStream) throws IOException {
         int ch = iStream.read();
         while (isWhitespace(ch)) {
             ch = iStream.read();
