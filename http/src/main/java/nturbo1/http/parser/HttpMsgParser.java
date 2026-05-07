@@ -1,5 +1,6 @@
 package nturbo1.http.parser;
 
+import nturbo1.http.HttpMethod;
 import nturbo1.http.exceptions.HttpMessageParseException;
 import nturbo1.http.exceptions.InvalidHttpHeaderException;
 
@@ -13,6 +14,104 @@ class HttpMsgParser {
 
     private static final int MAX_HEADER_NAME_SIZE = 8192;
     private static final int MAX_HEADER_VALUE_SIZE = 8192;
+    private static final int MAX_REQUEST_LINE_SIZE = 8192;
+    private static final int MAX_HTTP_METHOD_NAME_SIZE = 32;
+    private static final int MAX_HTTP_VERSION_BYTES_SIZE = 32; // Doesn't include the prefix, which is 'HTTP/'
+
+    /**
+     * Reads byte by byte an HTTP Request Line and parses it.
+     * <p>
+     * Request Line grammar:
+     * <p>
+     *     request-line   = method SP request-target SP HTTP-version
+     *     method         = token
+     *     request-target = origin-form
+     *                  / absolute-form
+     *                  / authority-form
+     *                  / asterisk-form
+     *     origin-form    = absolute-path [ "?" query ]
+     *     absolute-form  = absolute-URI
+     *     authority-form = uri-host ":" port
+     *     asterisk-form  = "*"
+     * </p>
+     * </p>
+     *
+     * @param iStream the byte source
+     * @return a parsed HttpReqLine object
+     * @throws IOException in case of an IO error
+     */
+    static HttpReqLine parseReqLine(InputStream iStream) throws IOException, HttpMessageParseException {
+        HttpMethod method = parseHttpMethod(iStream);
+        double version = parseHttpVersion(iStream);
+        UriInfo targetUri = UriParser.parseOriginForm(iStream);
+
+        return new HttpReqLine(method, targetUri, version);
+    }
+
+    static HttpMethod parseHttpMethod(InputStream iStream) throws IOException, HttpMessageParseException {
+        int ch = iStream.read();
+        ByteBuffer buf = ByteBuffer.allocate(MAX_HTTP_METHOD_NAME_SIZE);
+        while (!isWhitespace(ch) && ch != -1) {
+            try {
+                buf.put((byte) ch);
+            } catch (BufferOverflowException bofe) {
+                throw new HttpMessageParseException("The HTTP method name in the request line exceeded the size limit.");
+            }
+        }
+
+        if (ch == -1)
+            throw new HttpMessageParseException(
+                    "Failed to parse the HTTP method in the request line due to the input stream being closed.");
+        assert buf.hasArray() && buf.position() > 0 : "HTTP method byte buffer should not be empty!";
+
+        String methodName = new String(buf.array(), 0, buf.position() + 1, StandardCharsets.ISO_8859_1);
+        try {
+            return HttpMethod.valueOf(methodName);
+        } catch (IllegalArgumentException iae) {
+            throw new HttpMessageParseException("Invalid/Unsupported HTTP method: " + methodName);
+        }
+    }
+
+    /**
+     * HTTP Version Grammar:
+     * <p>
+     *     HTTP-version  = HTTP-name "/" DIGIT "." DIGIT
+     *     HTTP-name     = %s"HTTP"
+     * </p>
+     *
+     * @param iStream the byte source
+     * @return parsed valid HTTP version number
+     * @throws IOException in case of an IO error
+     * @throws HttpMessageParseException in case of a parsing error
+     */
+    static double parseHttpVersion(InputStream iStream) throws IOException, HttpMessageParseException {
+        byte[] httpPrefix = { 'H', 'T', 'T', 'P' };
+        for (int i = 0; i < 4; i++) {
+            if (iStream.read() != httpPrefix[i])
+                throw new HttpMessageParseException("Invalid HTTP version in the start line.");
+        }
+
+        if (iStream.read() != '/')
+            throw new HttpMessageParseException("Invalid HTTP version in the start line.");
+
+        int ch = iStream.read();
+        ByteBuffer versionBytes = ByteBuffer.allocate(MAX_HTTP_VERSION_BYTES_SIZE);
+        while(!isWhitespace(ch)) {
+            try {
+                versionBytes.put((byte) ch);
+            } catch (BufferOverflowException bofe) {
+                throw new HttpMessageParseException("HTTP version number bytes exceeds the limit.");
+            }
+        }
+        assert versionBytes.hasArray() && versionBytes.position() > 0 : "HTTP Version number bytes buffer shouldn't be empty!";
+
+        String versionStr = new String(versionBytes.array(), 0, versionBytes.position() + 1, StandardCharsets.ISO_8859_1);
+        try {
+            return Double.parseDouble(versionStr);
+        } catch (NumberFormatException nfe) {
+            throw new HttpMessageParseException("Invalid HTTP version number: " + versionStr);
+        }
+    }
 
     /**
      * Reads byte by byte a header line and parses it.
