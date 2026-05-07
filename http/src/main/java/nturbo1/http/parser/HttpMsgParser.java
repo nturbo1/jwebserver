@@ -42,7 +42,7 @@ class HttpMsgParser {
     static HttpReqLine parseReqLine(InputStream iStream) throws IOException, HttpMessageParseException {
         HttpMethod method = parseHttpMethod(iStream);
         double version = parseHttpVersion(iStream);
-        UriInfo targetUri = UriParser.parseOriginForm(iStream);
+        UriInfo targetUri = UriParser.parseReqTarget(iStream);
 
         return new HttpReqLine(method, targetUri, version);
     }

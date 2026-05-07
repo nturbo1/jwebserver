@@ -13,19 +13,6 @@ import java.util.Map;
 
 /**
  * Parser for the Request Target of the start line in an HTTP message.
- * <p>
- * HTTP Request Target Grammar:
- * <p>
- *     request-target = origin-form
- *                      / absolute-form
- *                      / authority-form
- *                      / asterisk-form
- *         origin-form    = absolute-path [ "?" query ]
- *         absolute-form  = absolute-URI
- *         authority-form = uri-host ":" port
- *         asterisk-form  = "*"
- * </p>
- * </p>
  */
 class UriParser {
     private static final int MAX_TARGET_URI_SIZE = 8192; // The actual size of a whole URI is not quite checked,
@@ -33,6 +20,30 @@ class UriParser {
     private static final int MAX_QUERY_KEY_OR_VALUE_SIZE = 8192;
 
     private static final CustomLogger log = CustomLogger.getLogger(UriParser.class.getName());
+
+    /**
+     * <p>
+     * HTTP Request Target Grammar:
+     * <p>
+     *     request-target = origin-form
+     *                      / absolute-form
+     *                      / authority-form
+     *                      / asterisk-form
+     *         origin-form    = absolute-path [ "?" query ]
+     *         absolute-form  = absolute-URI
+     *         authority-form = uri-host ":" port
+     *         asterisk-form  = "*"
+     * </p>
+     * </p>
+     * @param iStream the byte source
+     * @return a parsed UriInfo object
+     * @throws IOException in case of an IO error
+     * @throws HttpMessageParseException in case of a parsing error
+     */
+    static UriInfo parseReqTarget(InputStream iStream) throws IOException, HttpMessageParseException {
+        log.warn("The HTTP Request Target is parsed only in the 'origin-form'! SHOULD BE FIXED LATER!!!");
+        return parseOriginForm(iStream);
+    }
 
     /**
      * A target URI origin-form grammar:
