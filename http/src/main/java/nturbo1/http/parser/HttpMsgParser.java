@@ -65,7 +65,7 @@ class HttpMsgParser {
                     "Failed to parse the HTTP method in the request line due to the input stream being closed.");
         assert buf.hasArray() && buf.position() > 0 : "HTTP method byte buffer should not be empty!";
 
-        String methodName = new String(buf.array(), 0, buf.position() + 1, StandardCharsets.ISO_8859_1);
+        String methodName = new String(buf.array(), 0, buf.position(), StandardCharsets.ISO_8859_1);
         try {
             return HttpMethod.valueOf(methodName);
         } catch (IllegalArgumentException iae) {
