@@ -108,10 +108,10 @@ class UriParser {
      *                      (non-visible ASCII characters),
      *                      Non-ASCII
      * </p>
-     * @param iStream
-     * @return
-     * @throws IOException
-     * @throws HttpMessageParseException
+     * @param iStream the byte source
+     * @return a Map object containing parsed query key-value pairs
+     * @throws IOException in case of an IO error
+     * @throws HttpMessageParseException in case of a parsing error
      */
     private static Map<String, String> parseQueryParams(InputStream iStream) throws IOException, HttpMessageParseException {
         log.warn("HTTP Request Target URI Query part bytes are not decoded when parsed. SHOULD BE FIXED LATER!!!");
